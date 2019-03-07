@@ -3,23 +3,24 @@
 
 ### Usage Demo
 ``` c++
-auto widget = new QWidget(this);
+QWidget *widget = new QWidget(this);
 widget->setGeometry(0, 0, 560, 50);
 
-auto hbox = new QHBoxLayout(widget);
+QHBoxLayout *hbox = new QHBoxLayout(widget);
 hbox->addItem(new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Preferred));
 
-auto pagination = new Pagination(widget);
-hbox->addWidget(pagination);
+auto qPagination = new QPagination(widget, 30);
+hbox->addWidget(qPagination);
 
-auto text = new QLabel(this);
+QLabel *text = new QLabel(this);
 text->setGeometry(120, 50, 40, 20);
 
-connect(pagination, &Pagination::selectPage, [=](int value) {
-	text->setText(QString::number(value));
+connect(qPagination, &QPagination::onPageChange, [=](int currentPage) {
+    text->setText(QString::number(currentPage));
 });
 
-pagination->setTotalSize(20);
+qPagination->setTotalPages(20);
+qPagination->show();
 ```
 
 ![image](https://github.com/daonvshu/Pagination/blob/master/demo.png?raw=true)

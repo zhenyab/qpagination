@@ -22,11 +22,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QLabel *text = new QLabel(this);
     text->setGeometry(120, 50, 40, 20);
 
-    connect(qPagination, &QPagination::onPageChange, [=](int value) {
-        text->setText(QString::number(value));
+    connect(qPagination, &QPagination::onPageChange, [=](int currentPage) {
+        text->setText(QString::number(currentPage));
     });
 
     qPagination->setTotalPages(20);
+    qPagination->show();
 }
 
 MainWindow::~MainWindow() {
