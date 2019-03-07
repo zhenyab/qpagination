@@ -1,83 +1,110 @@
 #include "qpagination.h"
 
 #include <QDebug>
+#include <QPainter>
+#include <QStyleOption>
 
 QPagination::QPagination(QWidget *parent, int height) : QWidget(parent),
     height(height) {
 
+    buttonPrevious = nullptr;
+    buttonNext = nullptr;
+//    buttons = QVector<QPushButton>();
+
     setMinimumHeight(height);
 
-    currentIndex = 0;
+    currentPage = 1;
+    previousPage = -1;
+}
+
+QPagination::~QPagination() {
+    delete buttonNext;
+    delete buttonPrevious;
 }
 
 void QPagination::setTotalPages(int totalPages) {
     this->totalPages = totalPages;
-    currentIndex = 0;
+    currentPage = 1;
 }
 
 void QPagination::show() {
-    QHBoxLayout *hbox = new QHBoxLayout(this);
-    hbox->setContentsMargins(6, 0, 6, 0);
-    hbox->setSpacing(0);
+    QHBoxLayout *layout = new QHBoxLayout(this);
+    layout->setContentsMargins(6, 0, 6, 0);
+    layout->setSpacing(0);
 
-    if (totalPages > 1) {
-        QPushButton *buttonPrevious = new QPushButton("<", this);
-        buttonPrevious->setMinimumSize(24, 24);
-        hbox->addWidget(buttonPrevious);
-        connect(buttonPrevious, &QPushButton::clicked, [&](){
-            if (currentIndex == 0) {
-                buttonPrevious->setEnabled(false);
-                buttonPrevious->setVisible(false);
-                return;
-            }
-    //            int offset = 1;
-    //            if (curBtnIndex - offset == 2 || curBtnIndex - offset == 10) {
-    //                offset++;
-    //            }
-    //            if (!btn[curBtnIndex - offset]->isVisible()) {
-    //                offset++;
-    //            }
-    //            clicked(curBtnIndex - offset);
-            emit onPageChange(currentIndex + 1);
-        });
-    }
-
-    for (int i = 0; i < 13; i++) {
-        buttons[i] = new QPushButton(this);
-        buttons[i]->setMinimumSize(24, 24);
-        hbox->addWidget(buttons[i]);
-
-        if (i != 2 && i != 10) {
-            connect(buttons[i], &QPushButton::clicked, [=]() {
-                //clicked(i);
-                qDebug() << "Clicked button: " << i;
-            });
-        } else {
-            buttons[i]->setStyleSheet(".QPushButton:hover{background:transparent;}");//去掉省略号hover状态
+    buttonPrevious = new QPushButton("<", this);
+    buttonPrevious->setMinimumSize(24, 24);
+    buttonPrevious->setEnabled(false);
+    buttonPrevious->setVisible(false);
+    connect(buttonPrevious, &QPushButton::clicked, [&](){
+        if (currentPage <= 1) {
+            return;
         }
+
+        previousPage = currentPage;
+        currentPage -= 1;
+        onClick();
+    });
+
+    buttonNext = new QPushButton(">", this);
+    buttonNext->setMinimumSize(24, 24);
+    buttonNext->setEnabled(false);
+    buttonNext->setVisible(false);
+    connect(buttonNext, &QPushButton::clicked, [&]() {
+        if (currentPage >= totalPages) {
+            return;
+        }
+
+        previousPage = currentPage;
+        currentPage += 1;
+        onClick();
+    });
+
+    if (totalPages > 1) {
+        buttonPrevious->setVisible(true);
+        layout->addWidget(buttonPrevious);
+    }
+
+    for (int i = 0; i < totalPages; i++) {
+        int pageNumber = i + 1;
+        QPushButton *button = new QPushButton(QString::number(pageNumber), this);
+        button->setMinimumSize(24, 24);
+        button->setStyleSheet("QPushButton:hover { background:transparent; }");
+
+        if (currentPage == pageNumber) {
+            button->setEnabled(false);
+        }
+
+        connect(button, &QPushButton::clicked, [=]() {
+            previousPage = currentPage;
+            currentPage = pageNumber;
+            onClick();
+        });
+        layout->addWidget(button);
+        buttons.append(button);
     }
 
     if (totalPages > 1) {
-        QPushButton *buttonNext = new QPushButton(">", this);
-        buttonNext->setMinimumSize(24, 24);
-        hbox->addWidget(buttonNext);
-        connect(buttonNext, &QPushButton::clicked, [&]() {
-//                if (totalSize >= 10 && curBtnIndex + 1 > 12) {
-//                    return;
-//                } else if (totalSize > 2 && totalSize < 10 && curBtnIndex + 1 > totalSize) {
-//                    return;
-//                } else if (totalSize < 3 && curBtnIndex + 1 > totalSize - 1) {
-//                    return;
-//                }
-
-//                int offset = 1;
-//                if (!btn[curBtnIndex + offset]->isVisible()) {
-//                    offset++;
-//                }
-//                if (curBtnIndex + offset == 2 || curBtnIndex + offset == 10) {
-//                    offset++;
-//                }
-//                clicked(curBtnIndex + offset);
-            });
+        buttonNext->setVisible(true);
+        buttonNext->setEnabled(true);
+        layout->addWidget(buttonNext);
     }
+}
+
+void QPagination::onClick() {
+    buttonPrevious->setEnabled(currentPage > 1);
+
+    buttonNext->setEnabled(currentPage < totalPages);
+
+    buttons.at(previousPage - 1)->setEnabled(true);
+    buttons.at(currentPage - 1)->setEnabled(false);
+
+    emit onPageChange(currentPage);
+}
+
+void QPagination::paintEvent(QPaintEvent *) {
+    QStyleOption styleOption;
+    styleOption.init(this);
+    QPainter painter(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &styleOption, &painter, this);
 }

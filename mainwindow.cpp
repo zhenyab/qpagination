@@ -10,24 +10,25 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    QWidget *widget = new QWidget(this);
+    auto widget = new QWidget(this);
     widget->setGeometry(0, 0, 560, 50);
 
-    QHBoxLayout *hbox = new QHBoxLayout(widget);
+    auto hbox = new QHBoxLayout(widget);
     hbox->addItem(new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Preferred));
 
-    auto qPagination = new QPagination(widget, 30);
-    hbox->addWidget(qPagination);
+    QPagination *pagination = new QPagination(widget);
+    hbox->addWidget(pagination);
 
-    QLabel *text = new QLabel(this);
+    auto text = new QLabel(this);
     text->setGeometry(120, 50, 40, 20);
+    text->setText("1");
 
-    connect(qPagination, &QPagination::onPageChange, [=](int currentPage) {
-        text->setText(QString::number(currentPage));
+    connect(pagination, &QPagination::onPageChange, [=](int value) {
+        text->setText(QString::number(value));
     });
 
-    qPagination->setTotalPages(20);
-    qPagination->show();
+    pagination->setTotalPages(5);
+    pagination->show();
 }
 
 MainWindow::~MainWindow() {

@@ -13,7 +13,7 @@ class QPagination : public QWidget {
     Q_OBJECT
 public:
     explicit QPagination(QWidget *parent = nullptr, int height = 30);
-
+    ~QPagination();
     /**
      * After all settings for the widget have been done, need to call this method once
      *
@@ -64,12 +64,20 @@ signals:
 
 public slots:
 
+protected:
+    void paintEvent(QPaintEvent*) override;
+
 private:
     int height;
     int totalPages;
-    int currentIndex;
+    int currentPage;
+    int previousPage;
     QSize buttonSize;
-    QPushButton* buttons[13];
+    QPushButton *buttonPrevious;
+    QPushButton *buttonNext;
+    QVector<QPushButton*> buttons;
+
+    void onClick();
 };
 
 #endif // QPAGINATION_H
