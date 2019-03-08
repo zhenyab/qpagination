@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     pagination->setStyleSheet("QPushButton { margin: 0 2px; color: #000; background: #fff; border: 1px solid #f00; border-radius: 5px; } QPushButton:disabled { background: #ccc; } QPushButton:hover { background:transparent; }");
     pagination->setTotalPages(20);
+    pagination->setCurrentPage(17);
+    pagination->setButtonsSize(QSize(30, 30));
     pagination->show();
 }
 

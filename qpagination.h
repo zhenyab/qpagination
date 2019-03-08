@@ -23,6 +23,14 @@ public:
     int getCurrentPage();
 
     /**
+     * Set current page
+     *
+     * @brief setCurrentPage
+     * @param currentPage
+     */
+    void setCurrentPage(int currentPage);
+
+    /**
      * After all settings for the widget have been done, need to call this method once
      *
      * @brief show
@@ -48,6 +56,7 @@ public:
      * @param height
      */
     void setButtonsSize(int width, int height);
+    void setButtonsSize(const QSize &size);
 
     /**
      * Set stylesheet for the button
@@ -98,6 +107,7 @@ private:
     void calculate();
     void setButton(int index, int pageNumber);
     void applyStyleSheet(QPushButton *button);
+    void applySize(QPushButton *button);
 };
 
 #endif // QPAGINATION_H

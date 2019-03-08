@@ -6,8 +6,8 @@
 QPagination::QPagination(QWidget *parent, int height) : QWidget(parent),
     height(height) {
 
-    buttonPrevious = nullptr;
-    buttonNext = nullptr;
+    buttonPrevious = new QPushButton(this);
+    buttonNext = new QPushButton(this);
 
     setMinimumHeight(height);
 
@@ -18,6 +18,22 @@ QPagination::QPagination(QWidget *parent, int height) : QWidget(parent),
 
 int QPagination::getCurrentPage() {
     return currentPage;
+}
+
+void QPagination::setButtonsSize(int width, int height) {
+
+    buttonSize = QSize(width, height);
+}
+
+void QPagination::setButtonsSize(const QSize &size) {
+    buttonSize = size;
+}
+
+void QPagination::setCurrentPage(int currentPage) {
+    if (currentPage > totalPages) {
+        currentPage = 1;
+    }
+    this->currentPage = currentPage;
 }
 
 void QPagination::setTotalPages(int totalPages) {
@@ -34,7 +50,7 @@ void QPagination::show() {
     layout->setContentsMargins(6, 0, 6, 0);
     layout->setSpacing(0);
 
-    buttonPrevious = new QPushButton("<", this);
+    buttonPrevious->setText("<");
     buttonPrevious->setMinimumSize(24, 24);
     buttonPrevious->setEnabled(false);
     buttonPrevious->setVisible(false);
@@ -46,7 +62,7 @@ void QPagination::show() {
     });
     applyStyleSheet(buttonPrevious);
 
-    buttonNext = new QPushButton(">", this);
+    buttonNext->setText(">");
     buttonNext->setMinimumSize(24, 24);
     buttonNext->setEnabled(false);
     buttonNext->setVisible(false);
@@ -71,6 +87,7 @@ void QPagination::show() {
         QPushButton *button = new QPushButton(this);
         button->setMinimumSize(24, 24);
         applyStyleSheet(button);
+        applySize(button);
 
         int pageNumber = -1;
         if (totalPages > totalButtons + 1) {
@@ -187,6 +204,19 @@ void QPagination::paintEvent(QPaintEvent *) {
     style()->drawPrimitive(QStyle::PE_Widget, &styleOption, &painter, this);
 }
 
+void QPagination::applySize(QPushButton *button) {
+    if (buttonSize.isValid()) {
+        button->setMinimumSize(buttonSize);
+        button->setMaximumSize(buttonSize);
+    }
+}
+
+void QPagination::applyStyleSheet(QPushButton *button) {
+    if (!styleSheet.isEmpty()) {
+        button->setStyleSheet(styleSheet);
+    }
+}
+
 void QPagination::setButton(int index, int pageNumber) {
 
     QString text;
@@ -199,10 +229,4 @@ void QPagination::setButton(int index, int pageNumber) {
     QPushButton *button = buttons.at(index);
     button->setProperty("page", pageNumber);
     button->setText(text);
-}
-
-void QPagination::applyStyleSheet(QPushButton *button) {
-    if (!styleSheet.isEmpty()) {
-        button->setStyleSheet(styleSheet);
-    }
 }
