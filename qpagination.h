@@ -13,7 +13,7 @@ class QPagination : public QWidget {
     Q_OBJECT
 public:
     explicit QPagination(QWidget *parent = nullptr, int height = 30);
-    ~QPagination();
+
     /**
      * After all settings for the widget have been done, need to call this method once
      *
@@ -48,7 +48,7 @@ public:
      * @param text
      * @param icon
      */
-    void setPreviousButton(const QString &text, const QPixmap &icon);
+    void setPreviousButton(const QPixmap &icon, const QString &text);
 
     /**
      * Set custom text or icon with tooltip for next button
@@ -57,7 +57,7 @@ public:
      * @param text
      * @param icon
      */
-    void setNextButton(const QString &text, const QPixmap &icon);
+    void setNextButton(const QPixmap &icon, const QString &text);
 
 signals:
     void onPageChange(int currentPage);
@@ -70,14 +70,16 @@ protected:
 private:
     int height;
     int totalPages;
-    int currentPage;
     int previousPage;
+    int currentPage;
+    int totalButtons;
     QSize buttonSize;
     QPushButton *buttonPrevious;
     QPushButton *buttonNext;
     QVector<QPushButton*> buttons;
 
-    void onClick();
+    void calculate();
+    void setButton(int index, int pageNumber);
 };
 
 #endif // QPAGINATION_H

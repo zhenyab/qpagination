@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
         text->setText(QString::number(value));
     });
 
-    pagination->setTotalPages(5);
+    pagination->setTotalPages(20);
     pagination->show();
 }
 
