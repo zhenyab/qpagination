@@ -67,7 +67,7 @@ public:
     void setStyleSheet(const QString &styleSheet);
 
     /**
-     * Set custom text or icon with tooltip for previous button
+     * Set custom text or icon with text for previous button
      *
      * @brief setPreviousButton
      * @param text
@@ -76,7 +76,7 @@ public:
     void setPreviousButton(const QPixmap &icon, const QString &text, const QSize &size);
 
     /**
-     * Set custom text or icon with tooltip for next button
+     * Set custom text or icon with text for next button
      *
      * @brief setPreviousButton
      * @param text
