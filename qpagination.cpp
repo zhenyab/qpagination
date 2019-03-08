@@ -1,6 +1,5 @@
 #include "qpagination.h"
 
-#include <QDebug>
 #include <QPainter>
 #include <QStyleOption>
 
@@ -17,9 +16,17 @@ QPagination::QPagination(QWidget *parent, int height) : QWidget(parent),
     totalButtons = 7;
 }
 
+int QPagination::getCurrentPage() {
+    return currentPage;
+}
+
 void QPagination::setTotalPages(int totalPages) {
     this->totalPages = totalPages;
     currentPage = 1;
+}
+
+void QPagination::setStyleSheet(const QString &styleSheet) {
+    this->styleSheet = styleSheet;
 }
 
 void QPagination::show() {
@@ -37,6 +44,7 @@ void QPagination::show() {
 
         calculate();
     });
+    applyStyleSheet(buttonPrevious);
 
     buttonNext = new QPushButton(">", this);
     buttonNext->setMinimumSize(24, 24);
@@ -48,6 +56,7 @@ void QPagination::show() {
 
         calculate();
     });
+    applyStyleSheet(buttonNext);
 
     if (totalPages > 1) {
         buttonPrevious->setVisible(true);
@@ -61,7 +70,7 @@ void QPagination::show() {
     for (int i = 0; i < totalButtons; i++) {
         QPushButton *button = new QPushButton(this);
         button->setMinimumSize(24, 24);
-        button->setStyleSheet("QPushButton:hover { background:transparent; }");
+        applyStyleSheet(button);
 
         int pageNumber = -1;
         if (totalPages > totalButtons + 1) {
@@ -190,4 +199,10 @@ void QPagination::setButton(int index, int pageNumber) {
     QPushButton *button = buttons.at(index);
     button->setProperty("page", pageNumber);
     button->setText(text);
+}
+
+void QPagination::applyStyleSheet(QPushButton *button) {
+    if (!styleSheet.isEmpty()) {
+        button->setStyleSheet(styleSheet);
+    }
 }

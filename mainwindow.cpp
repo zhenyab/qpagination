@@ -10,23 +10,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    auto widget = new QWidget(this);
+    QWidget *widget = new QWidget(this);
     widget->setGeometry(0, 0, 560, 50);
 
-    auto hbox = new QHBoxLayout(widget);
+    QHBoxLayout *hbox = new QHBoxLayout(widget);
     hbox->addItem(new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Preferred));
 
     QPagination *pagination = new QPagination(widget);
     hbox->addWidget(pagination);
 
-    auto text = new QLabel(this);
-    text->setGeometry(120, 50, 40, 20);
-    text->setText("1");
+    QLabel *label = new QLabel(this);
+    label->setText(QString::number(pagination->getCurrentPage()));
 
     connect(pagination, &QPagination::onPageChange, [=](int value) {
-        text->setText(QString::number(value));
+        label->setText(QString::number(value));
     });
 
+    pagination->setStyleSheet("QPushButton { margin: 0 2px; color: #000; background: #fff; border: 1px solid #f00; border-radius: 5px; } QPushButton:disabled { background: #ccc; } QPushButton:hover { background:transparent; }");
     pagination->setTotalPages(20);
     pagination->show();
 }
