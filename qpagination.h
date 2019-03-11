@@ -84,6 +84,8 @@ public:
      */
     void setNextButton(const QPixmap &icon, const QString &text, const QSize &size);
 
+    void updateTotalPages(int totalPages);
+
 signals:
     void onPageChange(int currentPage);
 
@@ -103,6 +105,7 @@ private:
     QPushButton *buttonNext;
     QVector<QPushButton*> buttons;
     QString styleSheet;
+    QHBoxLayout *layout;
 
     void calculate();
     void setButton(int index, int pageNumber);

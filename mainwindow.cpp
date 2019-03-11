@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     pagination->setButtonsSize(QSize(30, 30));
     pagination->show();
 
-    pagination->setTotalPages(10);
+    pagination->updateTotalPages(10);
 }
 
 MainWindow::~MainWindow() {

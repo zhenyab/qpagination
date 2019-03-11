@@ -2,9 +2,14 @@
 
 #include <QPainter>
 #include <QStyleOption>
+#include <QDebug>
 
 QPagination::QPagination(QWidget *parent, int height) : QWidget(parent),
     height(height) {
+
+    layout = new QHBoxLayout(this);
+    layout->setContentsMargins(6, 0, 6, 0);
+    layout->setSpacing(0);
 
     buttonPrevious = new QPushButton(this);
     buttonNext = new QPushButton(this);
@@ -45,11 +50,28 @@ void QPagination::setStyleSheet(const QString &styleSheet) {
     this->styleSheet = styleSheet;
 }
 
-void QPagination::show() {
-    QHBoxLayout *layout = new QHBoxLayout(this);
-    layout->setContentsMargins(6, 0, 6, 0);
-    layout->setSpacing(0);
+void QPagination::updateTotalPages(int totalPages) {
+    this->totalPages = totalPages;
+    if (currentPage > totalPages) {
+        currentPage = 1;
+    }
+    previousPage = -1;
+    totalButtons = 7;
 
+    buttons.clear();
+
+    while (QLayoutItem* item = layout->takeAt(0)) {
+        delete item->widget();
+        delete item;
+    }
+
+    buttonPrevious = new QPushButton(this);
+    buttonNext = new QPushButton(this);
+
+    show();
+}
+
+void QPagination::show() {
     buttonPrevious->setText("<");
     buttonPrevious->setMinimumSize(24, 24);
     buttonPrevious->setEnabled(false);
