@@ -32,4 +32,8 @@
 *.app
 
 .DS_Store
+<<<<<<< HEAD
 qpagination.pro.user
+=======
+qpgination.pro.user
+>>>>>>> develop
