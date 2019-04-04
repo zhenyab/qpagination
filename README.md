@@ -7,7 +7,6 @@ QWidget *widget = new QWidget(this);
 widget->setGeometry(0, 0, 560, 50);
 
 QHBoxLayout *hbox = new QHBoxLayout(widget);
-hbox->addItem(new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Preferred));
 
 QPagination *pagination = new QPagination(widget);
 hbox->addWidget(pagination);
@@ -24,4 +23,6 @@ pagination->setTotalPages(20);
 pagination->setCurrentPage(17);
 pagination->setButtonsSize(QSize(30, 30));
 pagination->show();
+
+pagination->updateTotalPages(10);
 ```

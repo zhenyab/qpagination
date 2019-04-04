@@ -74,6 +74,7 @@ public:
      * @param icon
      */
     void setPreviousButton(const QPixmap &icon, const QString &text, const QSize &size);
+    void setPreviousButton(const QString &text, const QSize &size);
 
     /**
      * Set custom text or icon with text for next button
@@ -83,6 +84,7 @@ public:
      * @param icon
      */
     void setNextButton(const QPixmap &icon, const QString &text, const QSize &size);
+    void setNextButton(const QString &text, const QSize &size);
 
     void updateTotalPages(int totalPages);
 

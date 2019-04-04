@@ -2,7 +2,7 @@
 
 #include <QPainter>
 #include <QStyleOption>
-#include <QDebug>
+#include <QSizePolicy>
 
 QPagination::QPagination(QWidget *parent, int height) : QWidget(parent),
     height(height) {
@@ -26,12 +26,33 @@ int QPagination::getCurrentPage() {
 }
 
 void QPagination::setButtonsSize(int width, int height) {
-
     buttonSize = QSize(width, height);
 }
 
 void QPagination::setButtonsSize(const QSize &size) {
     buttonSize = size;
+}
+
+void QPagination::setNextButton(const QPixmap &icon, const QString &text, const QSize &size) {
+    buttonNext->setText(text);
+    buttonNext->setIcon(icon);
+    buttonNext->setMinimumSize(size);
+    buttonNext->setMaximumSize(size);
+}
+
+void QPagination::setNextButton(const QString &text, const QSize &size) {
+    setNextButton(QPixmap(), text, size);
+}
+
+void QPagination::setPreviousButton(const QPixmap &icon, const QString &text, const QSize &size) {
+    buttonPrevious->setText(text);
+    buttonPrevious->setIcon(icon);
+    buttonPrevious->setMinimumSize(size);
+    buttonPrevious->setMaximumSize(size);
+}
+
+void QPagination::setPreviousButton(const QString &text, const QSize &size) {
+    setNextButton(QPixmap(), text, size);
 }
 
 void QPagination::setCurrentPage(int currentPage) {
@@ -51,6 +72,10 @@ void QPagination::setStyleSheet(const QString &styleSheet) {
 }
 
 void QPagination::updateTotalPages(int totalPages) {
+    if (this->totalPages == totalPages) {
+        return;
+    }
+
     this->totalPages = totalPages;
     if (currentPage > totalPages) {
         currentPage = 1;
@@ -72,8 +97,11 @@ void QPagination::updateTotalPages(int totalPages) {
 }
 
 void QPagination::show() {
+
+    QSpacerItem *horizontalSpacer1 = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Preferred);
+    layout->addItem(horizontalSpacer1);
+
     buttonPrevious->setText("<");
-    buttonPrevious->setMinimumSize(24, 24);
     buttonPrevious->setEnabled(false);
     buttonPrevious->setVisible(false);
     connect(buttonPrevious, &QPushButton::clicked, [&](){
@@ -81,11 +109,13 @@ void QPagination::show() {
         currentPage -= 1;
 
         calculate();
+
+        emit onPageChange(currentPage);
     });
     applyStyleSheet(buttonPrevious);
+    applySize(buttonPrevious);
 
     buttonNext->setText(">");
-    buttonNext->setMinimumSize(24, 24);
     buttonNext->setEnabled(false);
     buttonNext->setVisible(false);
     connect(buttonNext, &QPushButton::clicked, [&]() {
@@ -93,8 +123,11 @@ void QPagination::show() {
         currentPage += 1;
 
         calculate();
+
+        emit onPageChange(currentPage);
     });
     applyStyleSheet(buttonNext);
+    applySize(buttonNext);
 
     if (totalPages > 1) {
         buttonPrevious->setVisible(true);
@@ -112,7 +145,7 @@ void QPagination::show() {
         applySize(button);
 
         int pageNumber = -1;
-        if (totalPages > totalButtons + 1) {
+        if (totalPages >= totalButtons + 1) {
             if (i == 0) {
                 button->setProperty("page", 1);
                 pageNumber = 1;
@@ -158,6 +191,8 @@ void QPagination::show() {
             currentPage = newCurrentPage;
 
             calculate();
+
+            emit onPageChange(currentPage);
         });
         layout->addWidget(button);
         buttons.append(button);
@@ -168,6 +203,8 @@ void QPagination::show() {
         buttonNext->setEnabled(true);
         layout->addWidget(buttonNext);
     }
+    QSpacerItem *horizontalSpacer2 = new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Preferred);
+    layout->addItem(horizontalSpacer2);
 
     calculate();
 }
@@ -215,8 +252,6 @@ void QPagination::calculate() {
 
     buttonPrevious->setEnabled(currentPage > 1);
     buttonNext->setEnabled(currentPage < totalPages);
-
-    emit onPageChange(currentPage);
 }
 
 void QPagination::paintEvent(QPaintEvent *) {

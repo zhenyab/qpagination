@@ -14,7 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     widget->setGeometry(0, 0, 560, 50);
 
     QHBoxLayout *hbox = new QHBoxLayout(widget);
-    hbox->addItem(new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Preferred));
+
+    setCentralWidget(widget);
 
     QPagination *pagination = new QPagination(widget);
     hbox->addWidget(pagination);
